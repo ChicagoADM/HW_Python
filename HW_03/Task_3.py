@@ -26,4 +26,4 @@ for word in words_set:
 sorted_tuple = sorted(word_dict.items(), key=lambda x: x[1], reverse=True)
 
 for i in range(10):
-    print(f"({'), встречается в тексте:  '.join(str(item) for item in sorted_tuple[i])} раз")
+    print(f"({') встречается в тексте:  '.join(str(item) for item in sorted_tuple[i])} раз")
