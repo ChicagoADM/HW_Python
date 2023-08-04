@@ -51,19 +51,3 @@ def directory_information(directory):
 
 my_way = "C:\\Users\\Bekinsale\\Desktop\\project_py_charm\\home_work\\home_work_8"
 directory_information(my_way)
-# directory_information("C:\\Users\\Bekinsale\\AppData\\Local\\Microsoft\\WindowsApps\\"
-#                       "python3.10.exe C:\\Users\\Bekinsale\\Desktop\\project_py_charm\\home_work\\home_work_8")
-# Запись через лист более медленная
-# list_for_csv = []
-# for i, j in dict_dir.items():
-#     list_for_csv.append((i, j))
-#     if isinstance(j, dict):
-#         for k, y in j.items():
-#             list_for_csv.append((k, y))
-#             if isinstance(y, dict):
-#                 for q, w in y.items():
-#                     list_for_csv.append((q, w))
-#
-# with open('result.csv', 'w', newline='', encoding="utf-8") as file_3:
-#     writer = csv.writer(file_3)
-#     writer.writerows(list_for_csv)
