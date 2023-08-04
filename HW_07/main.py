@@ -1,34 +1,69 @@
+import os
+import json
+import pickle
+import csv
+# Напишите функцию, которая получает на вход директорию и рекурсивно обходит её и все вложенные директории.
+# Результаты обхода сохраните в файлы json, csv и pickle.
+# - Для дочерних объектов указывайте родительскую директорию.
+# - Для каждого объекта укажите файл это или директория.
+# - Для файлов сохраните его размер в байтах, а для директорий размер файлов в ней
+# с учётом всех вложенных файлов и директорий.
 
-# Решить задачи, которые не успели решить на семинаре.
-# Напишите функцию группового переименования файлов. Она должна:
-# принимать параметр желаемое конечное имя файлов. При переименовании в конце имени добавляется порядковый номер.
-# принимать параметр количество цифр в порядковом номере.
-# принимать параметр расширение исходного файла. Переименование должно работать только для этих файлов внутри каталога.
-# принимать параметр расширение конечного файла.
-# принимать диапазон сохраняемого оригинального имени. Например для диапазона [3, 6] берутся буквы с 3 по 6 из исходного имени файла. К ним прибавляется желаемое конечное имя, если оно передано. Далее счётчик файлов и расширение. 3.Соберите из созданных на уроке и в рамках домашнего задания функций пакет для работы с файлами.
 
-from pathlib import Path
-from fill_numbers import fill_numbers
-from name_gen import name_gen
-from from_two_files import from_two_files
-from make_files import make_files
-from new_make_files import new_make_file
-from group_rename import group_rename
+def directory_information(directory):
+    size_sum_all = 0
+    dict_dir = dict()
+    for path, my_dir, file_2 in os.walk(directory):
+        dict_dir[os.path.dirname(path)] = {path: {i: None for i in file_2}}
+        print(f"\n> Родительская директория: {os.path.dirname(path)}")
+        print(f'  > Путь данной директории: {path} \n    > Каталог(и): \\{"нет" if my_dir == [] else ", ".join(my_dir)}')
+        size_sum = 0
+        if file_2:
+            print(f'>  Найдено {len(file_2)} файл(а): ')
+            for i, name_file in enumerate(file_2, start=1):
+                size = path + "\\" + name_file
+                size_sum += os.stat(size).st_size
+                print(f"{i}-ый файл: имя{name_file :_>20}, размер{os.stat(size).st_size:_>40} байт")
+                dict_dir[os.path.dirname(path)][path][name_file] = str(os.stat(size).st_size) + " байт"
+        else:
+            print("> Файлов нет")
+            dict_dir[os.path.dirname(path)] = {path: "файлы не найдены"}
+        print(f"Общий размер{size_sum:_>70} байт" if file_2 else "")
+        size_sum_all += size_sum
+    print(f"Общий размер исходной директории{size_sum_all:_>70} байт")
+    dict_dir.update(Общий_размер_исходной_директории=str(size_sum_all) + " байт")
 
-if __name__ == '__main__':
-    fill_numbers(20, 'numbers.txt')
+    with open('result.json', 'w', encoding='utf-8') as file_2:
+        json.dump(dict_dir, file_2, indent=2, ensure_ascii=False)
+    with open('result.pickle', 'wb') as file_2:
+        pickle.dump(dict_dir, file_2)
+    with open('result.csv', 'w', newline='', encoding="utf-8") as file_3:
+        writer = csv.writer(file_3, delimiter=" ")
+        for i, j in dict_dir.items():
+            writer.writerow((i, j))
+            if isinstance(j, dict):
+                for k, y in j.items():
+                    writer.writerow((k, y))
+                    if isinstance(y, dict):
+                        for q, w in y.items():
+                            writer.writerow((q, w))
 
-    name_gen(10, 4, 7, Path('names.txt'))
 
-    from_two_files(Path('numbers.txt'), Path('names.txt'), Path('result.txt'))
-
-    make_files('bin', count=10)
-
-    data = {
-        'txt': 4,
-        'zip': 3,
-    }
-
-    new_make_file(data)
-
-    group_rename(4, 'bin', 'zip', [2, 4], "new")
+my_way = "C:\\Users\\Bekinsale\\Desktop\\project_py_charm\\home_work\\home_work_8"
+directory_information(my_way)
+# directory_information("C:\\Users\\Bekinsale\\AppData\\Local\\Microsoft\\WindowsApps\\"
+#                       "python3.10.exe C:\\Users\\Bekinsale\\Desktop\\project_py_charm\\home_work\\home_work_8")
+# Запись через лист более медленная
+# list_for_csv = []
+# for i, j in dict_dir.items():
+#     list_for_csv.append((i, j))
+#     if isinstance(j, dict):
+#         for k, y in j.items():
+#             list_for_csv.append((k, y))
+#             if isinstance(y, dict):
+#                 for q, w in y.items():
+#                     list_for_csv.append((q, w))
+#
+# with open('result.csv', 'w', newline='', encoding="utf-8") as file_3:
+#     writer = csv.writer(file_3)
+#     writer.writerows(list_for_csv)
