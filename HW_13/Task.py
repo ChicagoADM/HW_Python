@@ -1,6 +1,7 @@
 import csv
 from functools import reduce
 from pathlib import Path
+from exceptions import *
 
 
 class Validate:
@@ -20,11 +21,9 @@ class Validate:
 
     def validate(self, value):
         if not isinstance(value, str):
-            raise TypeError(f'Значение {value} должно быть текстом')
-        if not value.isalpha():
-            raise TypeError(f'Значение {value} должно содержать только буквы')
-        if not value.istitle():
-            raise TypeError(f'Значение {value} должно начинаться с заглавной буквы')
+            raise UserTypeStrError(value)
+        if not value.isalpha() or not value.istitle():
+            raise UserTypeTextError(value)
 
 
 class Student:
@@ -58,15 +57,15 @@ class Student:
 
     def new_estimate(self, name_of_lesson: str, number: int, type_est: str = "less"):
         if name_of_lesson not in self.lessons["lessons"].keys():
-            raise AttributeError("Предмет не изучается данным студентом")
+            raise UserLessonsError(name_of_lesson)
         if type_est == "less":
             if number < 2 or number > 5:
-                raise ValueError("Оценка вне допустимого диапазона (2-5)")
+                raise UserEstimateError(number, 2, 5)
             self.lessons["lessons"][name_of_lesson]["estimates"].append(number)
             self.lessons["middle_estimate"] = self.middle_estimate(self.lessons)
         elif type_est == "test":
             if number < 0 or number > 100:
-                raise ValueError("Оценка вне допустимого диапазона (0-100)")
+                raise UserEstimateError(number, 0, 100)
             self.lessons["lessons"][name_of_lesson]["tests"].append(number)
             self.lessons["lessons"][name_of_lesson]["middle_estimate_test"] = \
                 reduce(lambda x, y: x + y, self.lessons["lessons"][name_of_lesson]["tests"]) / \
